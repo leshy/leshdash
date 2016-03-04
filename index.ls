@@ -1,15 +1,17 @@
 # autocompile
 
-require! { lodash: _ }
+require! { lodash }
 
-exports.jsonQuery = (path, object) -> 
+lib = {}
+
+lib.jsonQuery = (path, object) -> 
   if path@@ is String then path = path.split('.')
 
   if not path.length then return object
-  else exports.jsonQuery _.tail(path), object[_.head path]
+  else lib.jsonQuery lodash.tail(path), object[lodash.head path]
       
 
-exports.lazy = (f) ->
+lib.lazy = (f) ->
       res = {}
       (...args) ->
         if res.promise then res.promise
@@ -17,7 +19,7 @@ exports.lazy = (f) ->
 
 
 
-exports.jsonError = (error) ->
+lib.jsonError = (error) ->
     serializeError = (error) -> do
       stack: error.stack
       name: error.name
@@ -28,4 +30,6 @@ exports.jsonError = (error) ->
       | otherwise => { name: error.constructor.name, message: String(error) }
 
 
-_.assign exports, _
+
+module.exports = lodash.assign lib, lodash
+
