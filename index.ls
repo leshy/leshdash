@@ -11,14 +11,6 @@ lib.jsonQuery = (path, object) ->
   else lib.jsonQuery lodash.tail(path), object[lodash.head path]
       
 
-lib.lazy = (f) ->
-      res = {}
-      (...args) ->
-        if res.promise then res.promise
-        else res.promise = f.apply @, args
-
-
-
 lib.jsonError = (error) ->
     serializeError = (error) -> do
       stack: error.stack
@@ -28,6 +20,16 @@ lib.jsonError = (error) ->
     switch error.constructor
       | Error => serializeError error
       | otherwise => { name: error.constructor.name, message: String(error) }
+
+lib.wait = (t, f) -> setTimeout f, t
+
+lib.lazy = (f) ->
+      res = {}
+      (...args) ->
+        if res.promise then res.promise
+        else res.promise = f.apply @, args
+
+
 
 
 

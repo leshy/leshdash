@@ -1,5 +1,6 @@
 require! {
   assert
+  bluebird: p
   chai: { expect }
   '../index.ls': leshdash
 }
@@ -14,3 +15,6 @@ describe 'leshdash', ->
   specify 'lodash', ->
     expect leshdash.assign
     .to.be.instanceof Function
+
+  specify 'wait' , -> new p (resolve,reject) ~> 
+    leshdash.wait 100, -> resolve!
