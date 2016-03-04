@@ -17,4 +17,4 @@ describe 'leshdash', ->
     .to.be.instanceof Function
 
   specify 'wait' , -> new p (resolve,reject) ~> 
-    leshdash.wait 100, -> resolve!
+    leshdash.wait 50, -> resolve!
