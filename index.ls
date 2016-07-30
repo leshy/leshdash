@@ -1,9 +1,10 @@
 # autocompile
+require! { lodash: { assign }:lodash }
 
-require! { lodash }
-
-lib = {}
-
+lib = assign do
+  require './curried'
+  w: require './wrap'
+  
 lib.jsonQuery = (path, object, seperator="_") -> 
   if path@@ is String then path = path.split seperator
 
@@ -23,11 +24,9 @@ lib.jsonError = (error) ->
 
 lib.wait = (t, f) -> setTimeout f, t
 
-lib.lazy = (f) ->
-      res = {}
-      (...args) ->
-        if res.promise then res.promise
-        else res.promise = f.apply @, args
+lib.waitCancel = (t, f) ->
+  id = lib.wait t, f
+  -> clearTimeout id
 
 lib.abstractPad = abstractPad = (operation, success, text) ->
     if not text? then text = ""
@@ -57,5 +56,20 @@ lib.antipad = (text,chr="0") ->
         ((text) -> text[text.length - 1] is chr),
         text)
 
+# immutable push
+lib.push = (array, ...stuff) -> array.concat stuff  
+
+lib.pop = (object, key) ->
+  ret = object[key]
+  delete object.key
+  ret
+
+dChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split ''
+
+lib.token = (targetLen=25, chars=dChars) ->
+  ret = []
+  while ret.length < targetLen
+    ret.push lodash.sample chars
+  ret.join ''
 
 module.exports = lodash.assign lib, lodash

@@ -18,3 +18,9 @@ describe 'leshdash', ->
 
   specify 'wait' , -> new p (resolve,reject) ~> 
     leshdash.wait 50, -> resolve!
+
+  specify 'token', -> new p (resolve,reject) ~>
+    console.log ret = leshdash.token!
+    expect ret.length
+    .to.be.equal 25
+    resolve!
