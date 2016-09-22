@@ -1,8 +1,12 @@
 # autocompile
-require! { lodash: { assign }:lodash }
+require! {
+  lodash: { assign }:lodash
+  bluebird: p
+}
 
 lib = assign do
   require './curried'
+  require './promise'
   w: require './wrap'
   
 lib.jsonQuery = (path, object, seperator="_") -> 
