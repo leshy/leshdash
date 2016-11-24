@@ -11,9 +11,11 @@ lib = assign do
   
 lib.jsonQuery = (path, object, seperator="_") -> 
   if path@@ is String then path = path.split seperator
-
+    
   if not path.length then return object
-  else lib.jsonQuery lodash.tail(path), object[lodash.head path]
+  else
+    if not deeperObject = object[lodash.head path] then return void
+    else lib.jsonQuery lodash.tail(path), deeperObject
       
 
 lib.jsonError = (error) ->
@@ -75,5 +77,7 @@ lib.token = (targetLen=25, chars=dChars) ->
   while ret.length < targetLen
     ret.push lodash.sample chars
   ret.join ''
+
+lib.identity = -> it
 
 module.exports = lodash.assign lib, lodash
