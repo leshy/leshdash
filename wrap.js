@@ -1,7 +1,7 @@
 (function(){
-  var p, _, pwait, defaultsDeep, assign, flattenDeep, argsJoin, out$ = typeof exports != 'undefined' && exports || this, slice$ = [].slice;
+  var p, _, pwait, defaultsDeep, assign, flattenDeep, each, argsJoin, retSplit, out$ = typeof exports != 'undefined' && exports || this, slice$ = [].slice;
   p = require('bluebird');
-  _ = require('./index'), pwait = _.pwait, defaultsDeep = _.defaultsDeep, assign = _.assign, flattenDeep = _.flattenDeep;
+  _ = require('./index'), pwait = _.pwait, defaultsDeep = _.defaultsDeep, assign = _.assign, flattenDeep = _.flattenDeep, each = _.each;
   import$(out$, {
     argsJoin: argsJoin = {
       replace: function(prevArgs, args){
@@ -9,6 +9,15 @@
       },
       array: function(prevArgs, args){
         return (prevArgs || []).concat([args]);
+      }
+    },
+    retSplit: retSplit = {
+      array: function(promises, ret){
+        return _.each(_.zip(promises, ret), function(arg$){
+          var resolve, value;
+          resolve = arg$[0].resolve, value = arg$[1];
+          return resolve(value);
+        });
       }
     },
     lazy: function(f){
@@ -51,20 +60,21 @@
       };
     },
     delayAggregate: function(opts, f){
-      var env;
+      var dopts, env;
       if ((opts != null ? opts.constructor : void 8) === Function) {
         f = opts;
         opts = {};
       }
-      opts = _.defaultsDeep({
+      dopts = {
         delay: 100,
         cancel: true,
         argsJoin: argsJoin.array,
         retSplit: false
-      }, opts);
+      };
+      opts = import$(dopts, opts);
       env = {};
       return function(){
-        var args, delay, this$ = this;
+        var args, delay, ret, this$ = this;
         args = slice$.call(arguments);
         if (opts.cancel) {
           if (typeof env.cancel == 'function') {
@@ -74,21 +84,37 @@
         env.args = opts.argsJoin(env.args, args);
         delay = _.pwait(opts.delay).then(function(){
           return f.apply(this, env.args).then(function(val){
-            return env.res.resolve(val);
+            if (!opts.retSplit) {
+              return env.ret.resolve(val);
+            } else {
+              return opts.retSplit(env.ret, val);
+            }
           });
         });
         env.cancel = function(){
           delete env.cancel;
           return delay.cancel();
         };
-        if (env.res) {
-          return env.res.promise;
-        } else {
-          env.res = {};
-          return env.res.promise = new p(function(resolve, reject){
-            env.res.resolve = resolve;
-            return env.res.reject = reject;
+        if (opts.retSplit) {
+          if (!env.ret) {
+            env.ret = [];
+          }
+          ret = {};
+          env.ret.push(ret);
+          return ret.promise = new p(function(resolve, reject){
+            ret.resolve = resolve;
+            return ret.reject = reject;
           });
+        } else {
+          if (env.ret) {
+            return env.ret.promise;
+          } else {
+            env.ret = {};
+            return env.ret.promise = new p(function(resolve, reject){
+              env.ret.resolve = resolve;
+              return env.ret.reject = reject;
+            });
+          }
         }
       };
     }

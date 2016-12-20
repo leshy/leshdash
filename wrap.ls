@@ -1,7 +1,7 @@
 # autocompile
 require! {
   bluebird: p
-  './index':  { pwait, defaultsDeep, assign, flattenDeep }: _
+  './index':  { pwait, defaultsDeep, assign, flattenDeep, each }: _
 }
 
 export do
@@ -10,6 +10,10 @@ export do
     replace: (prevArgs, args) -> args
     array: (prevArgs, args) ->
       (prevArgs or []).concat [ args ]
+      
+  retSplit: retSplit = do
+    array: (promises, ret) ->
+      _.each _.zip(promises, ret), ([ { resolve }, value ] ) -> resolve value
     
   lazy : (f) ->
     res = {}
@@ -33,34 +37,48 @@ export do
   delayAggregate: (opts, f) ->
     if opts?@@ is Function then f = opts; opts = {}
 
-    opts = _.defaultsDeep do
+    dopts = do
       delay: 100
       cancel: true
       argsJoin: argsJoin.array
       retSplit: false
-      opts
+
+    opts = dopts <<< opts
 
     env = {}
 
     (...args) ->
       if opts.cancel then env.cancel?!
-
+        
       env.args = opts.argsJoin env.args, args
 
       delay = _.pwait opts.delay
       .then ->
         f.apply @, env.args
         .then (val) ->
-          env.res.resolve val
+          if not opts.retSplit then env.ret.resolve val
+          else opts.retSplit env.ret, val
 
       env.cancel = ->
         delete env.cancel
         delay.cancel()
 
-      if env.res then return env.res.promise
+      if opts.retSplit
+        if not env.ret then env.ret = []
+          
+        ret = {}
+        env.ret.push ret
+        
+        ret.promise = new p (resolve,reject) ~>
+          ret.resolve = resolve
+          ret.reject = reject
+
       else
-        env.res = {}
-        env.res.promise = new p (resolve,reject) ~>
-          env.res.resolve = resolve
-          env.res.reject = reject
+
+        if env.ret then return env.ret.promise
+        else
+          env.ret = {}
+          env.ret.promise = new p (resolve,reject) ~>
+            env.ret.resolve = resolve
+            env.ret.reject = reject
 
