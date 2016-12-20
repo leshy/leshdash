@@ -36,12 +36,12 @@ describe 'leshdash', ->
 
     promises = {}
     
-    promises.first = testw('bla',1)
+    promises.first = testw 'bla', 1
     
-    promises.second = testw('blu',2)
+    promises.second = testw 'blu', 2
 
     leshdash.wait 10, ->
-      promises.third = testw('blx',4)
+      promises.third = testw 'blx', 4
 
       assert promises.first is promises.second is promises.third
 
@@ -63,12 +63,12 @@ describe 'leshdash', ->
 
     promises = {}
     
-    promises.first = testw('bla',1)
+    promises.first = testw 'bla', 1
     
-    promises.second = testw('blu',2)
+    promises.second = testw 'blu', 2
 
     leshdash.wait 10, ->
-      promises.third = testw('blx',4)
+      promises.third = testw 'blx', 4
 
       assert promises.first isnt promises.second
       assert promises.second isnt promises.third
