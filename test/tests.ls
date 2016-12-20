@@ -7,6 +7,7 @@ require! {
 
 { jsonQuery, lazy, union, assign, omit, map, curry, times, keys, first } = leshdash
 
+
 describe 'leshdash', ->
   specify 'jsonQuery', ->
     expect jsonQuery 'level1/level2/level3', { level1: { level2: { level3: 44 }, bla: 3}, lallaa: 1 }
@@ -24,3 +25,26 @@ describe 'leshdash', ->
     expect ret.length
     .to.be.equal 25
     resolve!
+
+
+  specify 'delayAggregate', -> new p (resolve,reject) ~> 
+
+    testf = (args) -> new p (resolve,reject) ~>
+      console.log "CALLED WITH", args
+      leshdash.wait 100, -> resolve args
+
+
+    testw = leshdash.w.delayAggregate {argsJoin: leshdash.w.array}, testf
+
+    promises = {}
+    
+    promises.first = testw('bla',1)
+    promises.second = testw('blu',2)
+
+    leshdash.wait 10, ->
+      promises.third = testw('blx',4)
+
+
+      p.props promises, ->
+        console.log it
+        resolve!
