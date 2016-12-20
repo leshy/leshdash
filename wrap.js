@@ -59,7 +59,8 @@
       opts = _.defaultsDeep({
         delay: 100,
         cancel: true,
-        argsJoin: argsJoin.array
+        argsJoin: argsJoin.array,
+        retSplit: false
       }, opts);
       env = {};
       return function(){
@@ -72,21 +73,23 @@
         }
         env.args = opts.argsJoin(env.args, args);
         delay = _.pwait(opts.delay).then(function(){
-          return f.apply(this, env.args).then(function(it){
-            return env.resolve(it);
+          return f.apply(this, env.args).then(function(val){
+            return env.res.resolve(val);
           });
         });
         env.cancel = function(){
           delete env.cancel;
           return delay.cancel();
         };
-        if (env.res != null) {
-          return env.res;
+        if (env.res) {
+          return env.res.promise;
+        } else {
+          env.res = {};
+          return env.res.promise = new p(function(resolve, reject){
+            env.res.resolve = resolve;
+            return env.res.reject = reject;
+          });
         }
-        return env.res = new p(function(resolve, reject){
-          env.resolve = resolve;
-          return env.reject = reject;
-        });
       };
     }
   });

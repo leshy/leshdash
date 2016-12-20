@@ -37,6 +37,7 @@ export do
       delay: 100
       cancel: true
       argsJoin: argsJoin.array
+      retSplit: false
       opts
 
     env = {}
@@ -49,18 +50,17 @@ export do
       delay = _.pwait opts.delay
       .then ->
         f.apply @, env.args
-        .then -> env.resolve it
+        .then (val) ->
+          env.res.resolve val
 
       env.cancel = ->
         delete env.cancel
         delay.cancel()
-    
-      if env.res? then return env.res 
-      env.res = new p (resolve,reject) ~>
-        env.resolve = resolve
-        env.reject = reject
-        
-    
-  
-    
+
+      if env.res then return env.res.promise
+      else
+        env.res = {}
+        env.res.promise = new p (resolve,reject) ~>
+          env.res.resolve = resolve
+          env.res.reject = reject
 

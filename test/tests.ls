@@ -49,9 +49,7 @@ describe 'leshdash', ->
 
       console.log promises.first is promises.second is promises.third
 
-      promises.first.then ->
-        promises.second.then ->
-          promises.third.then ->
-            console.log "RESOLVED PROMISES"
-            console.log it
-            resolve!
+      p.props promises
+      .then ->
+        console.log "RESOLVED PROMISES", it
+        resolve!
