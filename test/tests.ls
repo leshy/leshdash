@@ -29,54 +29,56 @@ describe 'leshdash', ->
   specify 'delayAggregate', -> new p (resolve,reject) ~> 
 
     testf = (...args) -> new p (resolve,reject) ~>
-      console.log "CALLED WITH", args
-      leshdash.wait 100, -> resolve args
-
+      assert.deepEqual args, [["bla",1],["blu",2],["blx",4]]
+      leshdash.wait 20, -> resolve args
 
     testw = leshdash.w.delayAggregate {}, testf
 
     promises = {}
     
     promises.first = testw('bla',1)
-    promises.first.then -> 'resolved first'
     
     promises.second = testw('blu',2)
-    promises.second.then -> 'resolved second'
 
     leshdash.wait 10, ->
       promises.third = testw('blx',4)
-      promises.third.then -> 'resolved third'
 
-      console.log promises.first is promises.second is promises.third
+      assert promises.first is promises.second is promises.third
 
       p.props promises
       .then ->
-        console.log "RESOLVED PROMISES", it
+        assert.deepEqual it, do
+          "first":[["bla",1],["blu",2],["blx",4]],
+          "second":[["bla",1],["blu",2],["blx",4]],
+          "third":[["bla",1],["blu",2],["blx",4]] 
         resolve!
 
   specify 'delayAggregateSolit', -> new p (resolve,reject) ~> 
 
     testf = (...args) -> new p (resolve,reject) ~>
-      console.log "CALLED WITH", args
-      leshdash.wait 100, -> resolve args
+      assert.deepEqual args, [["bla",1],["blu",2],["blx",4]]
+      leshdash.wait 20, -> resolve args
 
     testw = leshdash.w.delayAggregate {retSplit: leshdash.w.retSplit.array}, testf
 
     promises = {}
     
     promises.first = testw('bla',1)
-    promises.first.then -> 'resolved first'
     
     promises.second = testw('blu',2)
-    promises.second.then -> 'resolved second'
 
     leshdash.wait 10, ->
       promises.third = testw('blx',4)
-      promises.third.then -> 'resolved third'
 
-      console.log promises.first is promises.second is promises.third
+      assert promises.first isnt promises.second
+      assert promises.second isnt promises.third
 
       p.props promises
       .then ->
-        console.log "RESOLVED PROMISES", it
+        assert.deepEqual it, do
+          first: [ 'bla', 1 ]
+          second: [ 'blu', 2 ]
+          third: [ 'blx', 4 ]
+
+        
         resolve!
