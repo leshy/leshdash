@@ -21,15 +21,14 @@ describe 'leshdash', ->
     leshdash.wait 50, -> resolve!
 
   specify 'token', -> new p (resolve,reject) ~>
-    console.log ret = leshdash.token!
+    ret = leshdash.token!
     expect ret.length
     .to.be.equal 25
-    resolve!
-
+    resolve ret
 
   specify 'delayAggregate', -> new p (resolve,reject) ~> 
 
-    testf = (args) -> new p (resolve,reject) ~>
+    testf = (...args) -> new p (resolve,reject) ~>
       console.log "CALLED WITH", args
       leshdash.wait 100, -> resolve args
 
@@ -39,12 +38,20 @@ describe 'leshdash', ->
     promises = {}
     
     promises.first = testw('bla',1)
+    promises.first.then -> 'resolved first'
+    
     promises.second = testw('blu',2)
+    promises.second.then -> 'resolved second'
 
     leshdash.wait 10, ->
       promises.third = testw('blx',4)
+      promises.third.then -> 'resolved third'
 
+      console.log promises.first is promises.second is promises.third
 
-      p.props promises, ->
-        console.log it
-        resolve!
+      promises.first.then ->
+        promises.second.then ->
+          promises.third.then ->
+            console.log "RESOLVED PROMISES"
+            console.log it
+            resolve!

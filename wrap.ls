@@ -8,7 +8,8 @@ export do
 
   argsJoin: argsJoin = do
     replace: (prevArgs, args) -> args
-    array: (prevArgs, args) -> [ ...prevArgs, args ]
+    array: (prevArgs, args) ->
+      (prevArgs or []).concat [ args ]
     
   lazy : (f) ->
     res = {}
@@ -18,7 +19,9 @@ export do
 
   list: (f) -> (...stuff) -> f.call @, flattenDeep stuff
 
+
   id: (f) -> (...args) -> f.apply @, args
+
 
   cancel: (f,data) ->
     cancel = void
@@ -26,13 +29,14 @@ export do
       if cancel?@@ is Function then cancel!
       cancel := f.apply @, args
 
+
   delayAggregate: (opts, f) ->
     if opts?@@ is Function then f = opts; opts = {}
 
     opts = _.defaultsDeep do
       delay: 100
       cancel: true
-      argsJoin: argsJoin.replace
+      argsJoin: argsJoin.array
       opts
 
     env = {}
@@ -40,18 +44,22 @@ export do
     (...args) ->
       if opts.cancel then env.cancel?!
 
-      env.args = if env.args? then env.argsJoin(env.args, args) else args
+      env.args = opts.argsJoin env.args, args
 
-      delay = _.pwait 100
+      delay = _.pwait opts.delay
       .then ->
         f.apply @, env.args
-        .then env.res.resolve
+        .then -> env.resolve it
 
       env.cancel = ->
         delete env.cancel
         delay.cancel()
     
-      return if env.res? then env.res else env.res = new p!
+      if env.res? then return env.res 
+      env.res = new p (resolve,reject) ~>
+        env.resolve = resolve
+        env.reject = reject
+        
     
   
     

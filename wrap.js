@@ -8,7 +8,7 @@
         return args;
       },
       array: function(prevArgs, args){
-        return slice$.call(prevArgs).concat([args]);
+        return (prevArgs || []).concat([args]);
       }
     },
     lazy: function(f){
@@ -59,28 +59,34 @@
       opts = _.defaultsDeep({
         delay: 100,
         cancel: true,
-        argsJoin: argsJoin.replace
+        argsJoin: argsJoin.array
       }, opts);
       env = {};
       return function(){
-        var args, delay;
+        var args, delay, this$ = this;
         args = slice$.call(arguments);
         if (opts.cancel) {
           if (typeof env.cancel == 'function') {
             env.cancel();
           }
         }
-        env.args = env.args != null ? env.argsJoin(env.args, args) : args;
-        delay = _.pwait(100).then(function(){
-          return f.apply(this, env.args).then(env.res.resolve);
+        env.args = opts.argsJoin(env.args, args);
+        delay = _.pwait(opts.delay).then(function(){
+          return f.apply(this, env.args).then(function(it){
+            return env.resolve(it);
+          });
         });
         env.cancel = function(){
           delete env.cancel;
           return delay.cancel();
         };
-        return env.res != null
-          ? env.res
-          : env.res = new p();
+        if (env.res != null) {
+          return env.res;
+        }
+        return env.res = new p(function(resolve, reject){
+          env.resolve = resolve;
+          return env.reject = reject;
+        });
       };
     }
   });
