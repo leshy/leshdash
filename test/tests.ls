@@ -37,7 +37,6 @@ describe 'leshdash', ->
     promises = {}
     
     promises.first = testw 'bla', 1
-    
     promises.second = testw 'blu', 2
 
     leshdash.wait 10, ->
@@ -64,7 +63,6 @@ describe 'leshdash', ->
     promises = {}
     
     promises.first = testw 'bla', 1
-    
     promises.second = testw 'blu', 2
 
     leshdash.wait 10, ->
@@ -80,5 +78,4 @@ describe 'leshdash', ->
           second: [ 'blu', 2 ]
           third: [ 'blx', 4 ]
 
-        
         resolve!

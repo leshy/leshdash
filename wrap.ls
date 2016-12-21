@@ -1,7 +1,7 @@
 # autocompile
 require! {
   bluebird: p
-  './index':  { pwait, defaultsDeep, assign, flattenDeep, each }: _
+  './index':  { pwait, defaultsDeep, assign, flattenDeep }: _
 }
 
 export do
@@ -49,15 +49,31 @@ export do
 
     (...args) ->
       if opts.cancel then env.cancel?!
-        
+      
       env.args = opts.argsJoin env.args, args
-
+      
+      
       delay = _.pwait opts.delay
-      .then ->
+      .then ~> 
+
+        resetEnv = ->
+          ret = {} <<< env
+          _.each env, (val, key) ->  delete env[key]
+          ret
+        
         f.apply @, env.args
+
         .then (val) ->
+          env = resetEnv()
+          
           if not opts.retSplit then env.ret.resolve val
           else opts.retSplit env.ret, val
+          
+        .catch (val) ->
+          env = resetEnv()
+            
+          if not opts.retSplit then env.ret.reject val
+          else _.each env.ret, (.reject val)
 
       env.cancel = ->
         delete env.cancel

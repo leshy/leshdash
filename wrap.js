@@ -1,7 +1,7 @@
 (function(){
-  var p, _, pwait, defaultsDeep, assign, flattenDeep, each, argsJoin, retSplit, out$ = typeof exports != 'undefined' && exports || this, slice$ = [].slice;
+  var p, _, pwait, defaultsDeep, assign, flattenDeep, argsJoin, retSplit, out$ = typeof exports != 'undefined' && exports || this, slice$ = [].slice;
   p = require('bluebird');
-  _ = require('./index'), pwait = _.pwait, defaultsDeep = _.defaultsDeep, assign = _.assign, flattenDeep = _.flattenDeep, each = _.each;
+  _ = require('./index'), pwait = _.pwait, defaultsDeep = _.defaultsDeep, assign = _.assign, flattenDeep = _.flattenDeep;
   import$(out$, {
     argsJoin: argsJoin = {
       replace: function(prevArgs, args){
@@ -83,11 +83,33 @@
         }
         env.args = opts.argsJoin(env.args, args);
         delay = _.pwait(opts.delay).then(function(){
-          return f.apply(this, env.args).then(function(val){
+          var resetEnv;
+          resetEnv = function(){
+            var ret;
+            ret = import$({}, env);
+            _.each(env, function(val, key){
+              var ref$;
+              return ref$ = env[key], delete env[key], ref$;
+            });
+            return ret;
+          };
+          return f.apply(this$, env.args).then(function(val){
+            var env;
+            env = resetEnv();
             if (!opts.retSplit) {
               return env.ret.resolve(val);
             } else {
               return opts.retSplit(env.ret, val);
+            }
+          })['catch'](function(val){
+            var env;
+            env = resetEnv();
+            if (!opts.retSplit) {
+              return env.ret.reject(val);
+            } else {
+              return _.each(env.ret, function(it){
+                return it.reject(val);
+              });
             }
           });
         });
