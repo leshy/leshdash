@@ -1,4 +1,3 @@
-# autocompile
 require! {
   bluebird: p
   './index':  { pwait, defaultsDeep, assign, flattenDeep }: _
@@ -23,9 +22,7 @@ export do
 
   list: (f) -> (...stuff) -> f.call @, flattenDeep stuff
 
-
   id: (f) -> (...args) -> f.apply @, args
-
 
   cancel: (f,data) ->
     cancel = void
