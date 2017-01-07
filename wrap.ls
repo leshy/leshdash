@@ -30,7 +30,6 @@ export do
       if cancel?@@ is Function then cancel!
       cancel := f.apply @, args
 
-
   delayAggregate: (opts, f) ->
     if opts?@@ is Function then f = opts; opts = {}
 

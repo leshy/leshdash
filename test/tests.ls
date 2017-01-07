@@ -1,11 +1,13 @@
 require! {
   assert
+  fs
+  path
   bluebird: p
   chai: { expect }
   '../index.ls': leshdash
 }
 
-{ jsonQuery, lazy, union, assign, omit, map, curry, times, keys, first } = leshdash
+{ jsonQuery, lazy, union, assign, omit, map, curry, times, keys, first, mapValues, mapKeys, fromPairs } = leshdash
 
 
 describe 'leshdash', ->
@@ -79,3 +81,35 @@ describe 'leshdash', ->
           third: [ 'blx', 4 ]
 
         resolve!
+
+  specify 'maybeP', -> new p (resolve,reject) ~>
+    cb1 = (x,y) -> x + y
+    cb2 = (x,y) -> new p (resolve,reject) ~> resolve x + y
+    
+    leshdash.maybeP cb1(1,2)
+    .then ->
+      assert it is 3
+      leshdash.maybeP cb2(2,2)
+      .then ->
+        assert it is 4
+        resolve!
+
+  specify 'depthFirst' , -> new p (resolve,reject) ~> 
+    leshdash.asyncDepthFirst path.join(path.dirname(require.main.filename) + '/../../'), do
+      callback: ->
+        return it
+        
+      getChildren: (node) -> new p (resolve,reject) ~>
+#        console.log "GETCHILDREN", node
+        
+        stats = fs.lstatSync node
+        if not stats.isDirectory() then return resolve void
+        else resolve fromPairs map fs.readdirSync(node), -> ret = (path.join node, it); [ ret, ret]
+
+    .then ->
+      console.log "DONE", it
+      resolve()
+        
+        
+        
+        

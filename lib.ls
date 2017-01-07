@@ -1,4 +1,7 @@
-require! { './index':  { head, tail, pwait, defaultsDeep, assign, flattenDeep }: leshdash }
+require! {
+  bluebird: p
+  './index':  { toPromise, mapValues, head, tail, pwait, assign, flattenDeep, defaultsDeep }: leshdash
+}
 
 export dChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split ''
 
@@ -69,4 +72,29 @@ export token = (targetLen=25, chars=dChars) ->
   ret.join ''
 
 export identity = -> it
+  
+export asyncDepthFirst = (node, opts) ->
+  
+  opts = leshdash.defaultsDeep opts, do
+    getChildren: -> ...
+    callback: -> ...
 
+  search = (node, visited={}) ->
+    
+    leshdash.maybeP opts.callback node
+    .then -> opts.getChildren node
+    .then (children) -> new p (resolve,reject) ~> 
+      if not children? then return resolve void
+      p.props leshdash.mapValues children, (node, id) -> 
+        if visited[id]? then return else search node, visited <<< { "#{id}": true }
+      .then resolve
+      
+  search node
+
+    
+
+      
+        
+                        
+      
+  
