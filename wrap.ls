@@ -1,3 +1,5 @@
+# autocompile
+
 require! {
   bluebird: p
   './index':  { pwait, defaultsDeep, assign, flattenDeep }: _

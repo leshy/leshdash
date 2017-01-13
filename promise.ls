@@ -1,3 +1,5 @@
+# autocompile
+
 require! {
   './index':  { pwait, defaultsDeep, assign, flattenDeep }: leshdash
   bluebird: p

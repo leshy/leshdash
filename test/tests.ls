@@ -97,14 +97,14 @@ describe 'leshdash', ->
   specify 'depthFirst' , -> new p (resolve,reject) ~> 
     leshdash.asyncDepthFirst path.join(path.dirname(require.main.filename) + '/../../'), do
       callback: ->
-        return it
+        return "GUZICA " + it
         
       getChildren: (node) -> new p (resolve,reject) ~>
 #        console.log "GETCHILDREN", node
         
         stats = fs.lstatSync node
         if not stats.isDirectory() then return resolve void
-        else resolve fromPairs map fs.readdirSync(node), -> ret = (path.join node, it); [ ret, ret]
+        else resolve fromPairs map fs.readdirSync(node), -> ret = (path.join node, it); [ it , ret]
 
     .then ->
       console.log "DONE", it

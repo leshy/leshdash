@@ -1,3 +1,5 @@
+# autocompile
+
 require! {
   bluebird: p
   './index':  { toPromise, mapValues, head, tail, pwait, assign, flattenDeep, defaultsDeep }: leshdash
@@ -78,23 +80,28 @@ export asyncDepthFirst = (node, opts) ->
   opts = leshdash.defaultsDeep opts, do
     getChildren: -> ...
     callback: -> ...
-
-  search = (node, visited={}) ->
     
+  search = (node, visited={}) ->
     leshdash.maybeP opts.callback node
+#    .then (ret) ->
+#      visited <<< { "#{ret}": true }
     .then -> opts.getChildren node
-    .then (children) -> new p (resolve,reject) ~> 
-      if not children? then return resolve void
-      p.props leshdash.mapValues children, (node, id) -> 
-        if visited[id]? then return else search node, visited <<< { "#{id}": true }
-      .then resolve
-      
+    .then (children) -> 
+      if not children? then return node
+      else p.props leshdash.mapValues children, (node, id) -> 
+        if visited[id]? then return else search node, visited
+  
   search node
 
-    
+export matchString = (matcher, target) -->
+  switch typeof! matcher
+    | "String" => true
 
-      
-        
-                        
-      
-  
+    | "Array" =>
+      leshdash.find matcher, leshdash.matchString
+
+    | "Function" =>
+      if ignore(nextLoc) then return
+
+    | "RegExp" =>
+      if matcher.test nextLoc then return
