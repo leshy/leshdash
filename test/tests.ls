@@ -11,13 +11,14 @@ require! {
 
 
 describe 'leshdash', ->
-  specify 'jsonQuery', ->
-    expect jsonQuery 'level1/level2/level3', { level1: { level2: { level3: 44 }, bla: 3}, lallaa: 1 }
-    .to.be.equal 44
-
+  
   specify 'lodash', ->
     expect leshdash.assign
     .to.be.instanceof Function
+  
+  specify 'renameKeys', ->
+    expect leshdash.renameKeys { bla: 3, id: 124 }, { id: 'remoteId' }
+    .to.deep.equal { bla: 3, remoteId: 124 }
 
   specify 'wait' , -> new p (resolve,reject) ~> 
     leshdash.wait 50, -> resolve!
@@ -106,9 +107,7 @@ describe 'leshdash', ->
         if not stats.isDirectory() then return resolve void
         else resolve fromPairs map fs.readdirSync(node), -> ret = (path.join node, it); [ it , ret]
 
-    .then ->
-      console.log "DONE", it
-      resolve()
+    .then -> resolve()
         
         
         

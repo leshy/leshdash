@@ -105,3 +105,9 @@ export matchString = (matcher, target) -->
 
     | "RegExp" =>
       if matcher.test nextLoc then return
+
+export cbc = (cb,err,data) -> if cb then cb err, data
+
+export renameKeys = (target, map) ->
+  leshdash.mapKeys target, (val,keyName) -> if newName = map[keyName] then newName else keyName
+
