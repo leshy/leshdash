@@ -112,3 +112,6 @@ describe 'leshdash', ->
         
         
         
+  specify 'randomid', -> new p (resolve,reject) ~>
+    assert leshdash.randomId(20).length is 20
+    resolve()
