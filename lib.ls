@@ -111,3 +111,9 @@ export cbc = (cb,err,data) -> if cb then cb err, data
 export renameKeys = (target, map) ->
   leshdash.mapKeys target, (val,keyName) -> if newName = map[keyName] then newName else keyName
 
+export randomId = (targetLen=20, alphabet) ->
+  ret = ""
+  if not alphabet then alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+  while ret.length < targetLen
+    ret += alphabet[Math.floor(Math.random! * alphabet.length)]
+  ret    
