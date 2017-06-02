@@ -101,14 +101,12 @@ describe 'leshdash', ->
         return "GUZICA " + it
         
       getChildren: (node) -> new p (resolve,reject) ~>
-#        console.log "GETCHILDREN", node
         
         stats = fs.lstatSync node
         if not stats.isDirectory() then return resolve void
         else resolve fromPairs map fs.readdirSync(node), -> ret = (path.join node, it); [ it , ret]
 
     .then -> resolve()
-        
         
         
         

@@ -66,7 +66,6 @@ export pop = (object, key) ->
   delete object.key
   ret
 
-
 export token = (targetLen=25, chars=dChars) ->
   ret = []
   while ret.length < targetLen
@@ -117,3 +116,9 @@ export randomId = (targetLen=20, alphabet) ->
   while ret.length < targetLen
     ret += alphabet[Math.floor(Math.random! * alphabet.length)]
   ret    
+
+
+export time = do
+  second: second = 1000
+  minute: minute = second * 60
+  hour: hour = minute * 60
