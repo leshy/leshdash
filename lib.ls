@@ -59,7 +59,7 @@ export antipad = (text,chr="0") ->
     text)
 
 # immutable push
-export push = (array, ...stuff) -> array.concat stuff  
+export push = (array, ...stuff) -> [ ...array, ...stuff ]
 
 export pop = (object, key) ->
   ret = object[key]

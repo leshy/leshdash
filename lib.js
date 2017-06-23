@@ -90,7 +90,7 @@
   out$.push = push = function(array){
     var stuff;
     stuff = slice$.call(arguments, 1);
-    return array.concat(stuff);
+    return slice$.call(array).concat(slice$.call(stuff));
   };
   out$.pop = pop = function(object, key){
     var ret;
