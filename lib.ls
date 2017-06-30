@@ -110,6 +110,17 @@ export cbc = (cb,err,data) -> if cb then cb err, data
 export renameKeys = (target, map) ->
   leshdash.mapKeys target, (val,keyName) -> if newName = map[keyName] then newName else keyName
 
+export mapObject = (target, cb) ->
+  ret = {}
+  
+  leshdash.each target, (val, key) ->
+    res = cb val, key
+    if res?@@ isnt Array then return
+    [ key, val ] = res
+    if key then ret[key] = val
+  ret
+  
+
 export randomId = (targetLen=20, alphabet) ->
   ret = ""
   if not alphabet then alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
