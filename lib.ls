@@ -2,7 +2,7 @@
 
 require! {
   bluebird: p
-  './index':  { toPromise, mapValues, head, tail, pwait, assign, flattenDeep, defaultsDeep }: leshdash
+  './index':  { toPromise, mapValues, head, tail, pwait, assign, flattenDeep, defaultsDeep, reduce }: leshdash
 }
 
 export dChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split ''
@@ -120,7 +120,6 @@ export mapObject = (target, cb) ->
     if key then ret[key] = val
   ret
   
-
 export randomId = (targetLen=20, alphabet) ->
   ret = ""
   if not alphabet then alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -128,8 +127,31 @@ export randomId = (targetLen=20, alphabet) ->
     ret += alphabet[Math.floor(Math.random! * alphabet.length)]
   ret    
 
-
 export time = do
   second: second = 1000
   minute: minute = second * 60
   hour: hour = minute * 60
+
+
+export pairsTails = (array, cb) ->
+  if not cb then cb = (x,y) -> [ x, y ]
+    
+  ret = reduce do
+    array,
+    (pairs, current) ->
+      if not pairs.length then [ cb(void, current) ]
+      else [ ...pairs, cb( (last last pairs), current) ]
+    []
+
+  [ ...ret, cb( (last last ret), void )  ]
+
+
+export pairs = (array, cb) ->
+  if not cb then cb = (x,y) -> [ x, y ]
+    
+  reduce @path,
+    (total, element, index) ~>
+      if not index then return []
+      if index is (array.length - 1) then return total
+      [ ...total, cb( array[index-1], element) ]
+      

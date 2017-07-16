@@ -32,4 +32,3 @@ export toCallback = (f, ...args, cb) -> new p (resolve,reject) ~>
   if ret?then@@ is Function
     ret.then -> cb void, it
     ret.catch -> cb it
-

@@ -9,6 +9,13 @@
       },
       array: function(prevArgs, args){
         return (prevArgs || []).concat([args]);
+      },
+      multiArray: function(prevArgs, args){
+        if (prevArgs) {
+          return slice$.call(prevArgs).concat([args]);
+        } else {
+          return [args];
+        }
       }
     },
     retSplit: retSplit = {

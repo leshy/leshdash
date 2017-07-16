@@ -9,8 +9,13 @@ export do
 
   argsJoin: argsJoin = do
     replace: (prevArgs, args) -> args
+    
     array: (prevArgs, args) ->
       (prevArgs or []).concat [ args ]
+      
+    multiArray: (prevArgs, args) ->
+      if prevArgs then [ ...prevArgs, args ]
+      else [ args ]
       
   retSplit: retSplit = do
     array: (promises, ret) ->
@@ -49,7 +54,6 @@ export do
       if opts.cancel then env.cancel?!
       
       env.args = opts.argsJoin env.args, args
-      
       
       delay = _.pwait opts.delay
       .then ~> 
