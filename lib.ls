@@ -136,22 +136,20 @@ export time = do
 export pairsTails = (array, cb) ->
   if not cb then cb = (x,y) -> [ x, y ]
     
-  ret = reduce do
+  ret = leshdash.reduce do
     array,
     (pairs, current) ->
       if not pairs.length then [ cb(void, current) ]
-      else [ ...pairs, cb( (last last pairs), current) ]
+      else [ ...pairs, cb( (leshdash.last leshdash.last pairs), current) ]
     []
 
-  [ ...ret, cb( (last last ret), void )  ]
-
+  [ ...ret, cb( (leshdash.last leshdash.last ret), void )  ]
 
 export pairs = (array, cb) ->
   if not cb then cb = (x,y) -> [ x, y ]
-    
-  reduce @path,
+  
+  leshdash.reduce array,
     (total, element, index) ~>
       if not index then return []
-      if index is (array.length - 1) then return total
       [ ...total, cb( array[index-1], element) ]
       
