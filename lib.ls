@@ -153,3 +153,8 @@ export pairs = (array, cb) ->
       if not index then return []
       [ ...total, cb( array[index-1], element) ]
       
+export mapFilter = (target, cb) ->
+  reduce do
+    target,
+    (ret, element) ->
+      if (newElement = cb(element, target)) != void then [ ...ret, newElement ] else ret

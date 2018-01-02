@@ -11,11 +11,17 @@ require! {
 
 
 describe 'leshdash', ->
-  
   specify 'lodash', ->
     expect leshdash.assign
     .to.be.instanceof Function
-  
+
+  specify 'mapFilter', -> new p (resolve,reject) ~>
+    assert.deepEqual do
+      leshdash.mapFilter [ 2, 5, 1, 20, 11, 41 ], -> if it > 5 then it else void
+      [ 20, 11, 41 ]
+    
+    resolve()  
+      
   specify 'renameKeys', ->
     expect leshdash.renameKeys { bla: 3, id: 124 }, { id: 'remoteId' }
     .to.deep.equal { bla: 3, remoteId: 124 }
@@ -109,7 +115,7 @@ describe 'leshdash', ->
     .then -> resolve()
         
         
-        
   specify 'randomid', -> new p (resolve,reject) ~>
     assert leshdash.randomId(20).length is 20
     resolve()
+
