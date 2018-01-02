@@ -2,6 +2,7 @@
 
 require! {
   bluebird: p
+  lodash: { head, tail }
   './index':  { pwait, defaultsDeep, assign, flattenDeep }: _
 }
 
@@ -31,11 +32,17 @@ export do
 
   id: (f) -> (...args) -> f.apply @, args
 
-  cancel: (f,data) ->
+  cancel: (f, data) ->
     cancel = void
     (...args) ->
       if cancel?@@ is Function then cancel!
       cancel := f.apply @, args
+
+  typeCast: (Type, f) ->
+    (...args) ->
+      if (h = head(args)?) and h@@ isnt Type
+        args = [ new Type(head args), ...(tail args) ]
+      f.apply @, args
 
   delayAggregate: (opts, f) ->
     if opts?@@ is Function then f = opts; opts = {}

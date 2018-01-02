@@ -158,3 +158,4 @@ export mapFilter = (target, cb) ->
     target,
     (ret, element) ->
       if (newElement = cb(element, target)) != void then [ ...ret, newElement ] else ret
+

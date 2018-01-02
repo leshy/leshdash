@@ -7,7 +7,7 @@ require! {
   '../index.ls': leshdash
 }
 
-{ jsonQuery, lazy, union, assign, omit, map, curry, times, keys, first, mapValues, mapKeys, fromPairs } = leshdash
+{ jsonQuery, lazy, union, assign, omit, map, curry, times, keys, first, mapValues, mapKeys, fromPairs, w } = leshdash
 
 
 describe 'leshdash', ->
@@ -88,6 +88,19 @@ describe 'leshdash', ->
           third: [ 'blx', 4 ]
 
         resolve!
+
+  specify 'typeCast', -> new p (resolve,reject) ~>
+    class TestType
+      (data) -> @ <<< data
+      
+    target = w.typeCast TestType, (bla, blu) ->
+      assert bla@@ is TestType
+      assert blu is 66
+      assert bla.bla is 3
+
+    target({bla: 3}, 66)
+    target(new TestType(bla: 3), 66)
+    resolve!
 
   specify 'maybeP', -> new p (resolve,reject) ~>
     cb1 = (x,y) -> x + y

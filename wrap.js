@@ -1,6 +1,7 @@
 (function(){
-  var p, _, pwait, defaultsDeep, assign, flattenDeep, argsJoin, retSplit, out$ = typeof exports != 'undefined' && exports || this, slice$ = [].slice;
+  var p, ref$, head, tail, _, pwait, defaultsDeep, assign, flattenDeep, argsJoin, retSplit, out$ = typeof exports != 'undefined' && exports || this, slice$ = [].slice;
   p = require('bluebird');
+  ref$ = require('lodash'), head = ref$.head, tail = ref$.tail;
   _ = require('./index'), pwait = _.pwait, defaultsDeep = _.defaultsDeep, assign = _.assign, flattenDeep = _.flattenDeep;
   import$(out$, {
     argsJoin: argsJoin = {
@@ -31,8 +32,12 @@
       var res;
       res = {};
       return function(){
-        var args;
-        args = slice$.call(arguments);
+        var args, res$, i$, to$;
+        res$ = [];
+        for (i$ = 0, to$ = arguments.length; i$ < to$; ++i$) {
+          res$.push(arguments[i$]);
+        }
+        args = res$;
         if (res.promise) {
           return res.promise;
         } else {
@@ -42,15 +47,23 @@
     },
     list: function(f){
       return function(){
-        var stuff;
-        stuff = slice$.call(arguments);
+        var stuff, res$, i$, to$;
+        res$ = [];
+        for (i$ = 0, to$ = arguments.length; i$ < to$; ++i$) {
+          res$.push(arguments[i$]);
+        }
+        stuff = res$;
         return f.call(this, flattenDeep(stuff));
       };
     },
     id: function(f){
       return function(){
-        var args;
-        args = slice$.call(arguments);
+        var args, res$, i$, to$;
+        res$ = [];
+        for (i$ = 0, to$ = arguments.length; i$ < to$; ++i$) {
+          res$.push(arguments[i$]);
+        }
+        args = res$;
         return f.apply(this, args);
       };
     },
@@ -58,12 +71,30 @@
       var cancel;
       cancel = void 8;
       return function(){
-        var args;
-        args = slice$.call(arguments);
+        var args, res$, i$, to$;
+        res$ = [];
+        for (i$ = 0, to$ = arguments.length; i$ < to$; ++i$) {
+          res$.push(arguments[i$]);
+        }
+        args = res$;
         if ((cancel != null ? cancel.constructor : void 8) === Function) {
           cancel();
         }
         return cancel = f.apply(this, args);
+      };
+    },
+    typeCast: function(Type, f){
+      return function(){
+        var args, res$, i$, to$, h;
+        res$ = [];
+        for (i$ = 0, to$ = arguments.length; i$ < to$; ++i$) {
+          res$.push(arguments[i$]);
+        }
+        args = res$;
+        if ((h = head(args) != null) && h.constructor !== Type) {
+          args = [new Type(head(args))].concat(slice$.call(tail(args)));
+        }
+        return f.apply(this, args);
       };
     },
     delayAggregate: function(opts, f){
@@ -81,8 +112,12 @@
       opts = import$(dopts, opts);
       env = {};
       return function(){
-        var args, delay, ret, this$ = this;
-        args = slice$.call(arguments);
+        var args, res$, i$, to$, delay, ret, this$ = this;
+        res$ = [];
+        for (i$ = 0, to$ = arguments.length; i$ < to$; ++i$) {
+          res$.push(arguments[i$]);
+        }
+        args = res$;
         if (opts.cancel) {
           if (typeof env.cancel == 'function') {
             env.cancel();
@@ -109,7 +144,7 @@
               return opts.retSplit(env.ret, val);
             }
           })['catch'](function(val){
-            var env;
+            var env, this$ = this;
             env = resetEnv();
             if (!opts.retSplit) {
               return env.ret.reject(val);
