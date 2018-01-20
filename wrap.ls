@@ -17,7 +17,7 @@ export do
     multiArray: (prevArgs, args) ->
       if prevArgs then [ ...prevArgs, args ]
       else [ args ]
-      
+
   retSplit: retSplit = do
     array: (promises, ret) ->
       _.each _.zip(promises, ret), ([ { resolve }, value ] ) -> resolve value

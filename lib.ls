@@ -118,20 +118,29 @@ export mapObject = (target, cb) ->
     if res?@@ isnt Array then return
     [ key, val ] = res
     if key then ret[key] = val
-  ret
-  
-export randomId = (targetLen=20, alphabet) ->
-  ret = ""
-  if not alphabet then alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-  while ret.length < targetLen
-    ret += alphabet[Math.floor(Math.random! * alphabet.length)]
-  ret    
+  ret  
 
+export randomId = (targetLen=20, alphabet=dChars) ->
+  ret = ""
+  leshdash.times targetLen, ->
+    ret += alphabet[Math.floor(Math.random! * alphabet.length)]
+  ret
+
+
+export weighted = (...elements) ->
+  target = Math.random() * leshdash.reduce do
+    elements
+    (total, element) -> total + leshdash.head element
+    0
+
+  leshdash.last leshdash.find elements, (element) ->
+    0 > (target := target - leshdash.head element)
+
+      
 export time = do
   second: second = 1000
   minute: minute = second * 60
   hour: hour = minute * 60
-
 
 export pairsTails = (array, cb) ->
   if not cb then cb = (x,y) -> [ x, y ]
@@ -158,4 +167,4 @@ export mapFilter = (target, cb) ->
     target,
     (ret, element) ->
       if (newElement = cb(element, target)) != void then [ ...ret, newElement ] else ret
-
+  

@@ -1,5 +1,5 @@
 (function(){
-  var p, leshdash, toPromise, mapValues, head, tail, pwait, assign, flattenDeep, defaultsDeep, reduce, dChars, jsonQuery, jsonError, wait, waitCancel, abstractPad, pad, rpad, antipad, push, pop, token, identity, asyncDepthFirst, matchString, cbc, renameKeys, mapObject, randomId, time, second, minute, hour, pairsTails, pairs, mapFilter, out$ = typeof exports != 'undefined' && exports || this, slice$ = [].slice, toString$ = {}.toString;
+  var p, leshdash, toPromise, mapValues, head, tail, pwait, assign, flattenDeep, defaultsDeep, reduce, dChars, jsonQuery, jsonError, wait, waitCancel, abstractPad, pad, rpad, antipad, push, pop, token, identity, asyncDepthFirst, matchString, cbc, renameKeys, mapObject, randomId, weighted, time, second, minute, hour, pairsTails, pairs, mapFilter, out$ = typeof exports != 'undefined' && exports || this, slice$ = [].slice, toString$ = {}.toString;
   p = require('bluebird');
   leshdash = require('./index'), toPromise = leshdash.toPromise, mapValues = leshdash.mapValues, head = leshdash.head, tail = leshdash.tail, pwait = leshdash.pwait, assign = leshdash.assign, flattenDeep = leshdash.flattenDeep, defaultsDeep = leshdash.defaultsDeep, reduce = leshdash.reduce;
   out$.dChars = dChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
@@ -190,14 +190,26 @@
   out$.randomId = randomId = function(targetLen, alphabet){
     var ret;
     targetLen == null && (targetLen = 20);
+    alphabet == null && (alphabet = dChars);
     ret = "";
-    if (!alphabet) {
-      alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    }
-    while (ret.length < targetLen) {
-      ret += alphabet[Math.floor(Math.random() * alphabet.length)];
-    }
+    leshdash.times(targetLen, function(){
+      return ret += alphabet[Math.floor(Math.random() * alphabet.length)];
+    });
     return ret;
+  };
+  out$.weighted = weighted = function(){
+    var elements, res$, i$, to$, target;
+    res$ = [];
+    for (i$ = 0, to$ = arguments.length; i$ < to$; ++i$) {
+      res$.push(arguments[i$]);
+    }
+    elements = res$;
+    target = Math.random() * leshdash.reduce(elements, function(total, element){
+      return total + leshdash.head(element);
+    }, 0);
+    return leshdash.last(leshdash.find(elements, function(element){
+      return 0 > (target = target - leshdash.head(element));
+    }));
   };
   out$.time = time = {
     second: second = 1000,
