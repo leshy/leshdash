@@ -136,7 +136,7 @@ export weighted = (...elements) ->
   leshdash.last leshdash.find elements, (element) ->
     0 > (target := target - leshdash.head element)
 
-      
+
 export time = do
   second: second = 1000
   minute: minute = second * 60
@@ -167,4 +167,19 @@ export mapFilter = (target, cb) ->
     target,
     (ret, element) ->
       if (newElement = cb(element, target)) != void then [ ...ret, newElement ] else ret
+  
+
+export linlin = (inMin, inMax, outMin, outMax, val) -->
+  
+  if val < inMin then return outMin
+  if val > inMax then return outMax
+    
+  range1 = inMax - inMin
+  range2 = outMax - outMin
+  outMin + (range2 * (val / range1))
+
+export linexp = (inMin, inMax, outMin, outMax, val) -->
+  true
+
+  
   

@@ -11,6 +11,28 @@ require! {
 
 
 describe 'leshdash', ->
+
+  specify 'linlin', ->
+    expect leshdash.linlin(0,1, 0,2, 0.5)
+    .to.equal 1
+
+    mapper = leshdash.linlin(-1,1, 0,2)
+    
+    expect mapper@@
+    .to.equal Function
+
+    expect mapper(1)
+    .to.equal 1
+    
+    expect mapper(0.75)
+    .to.equal 0.75
+
+    expect mapper(-333)
+    .to.equal 0
+    
+    expect mapper(333)
+    .to.equal 2
+
   specify 'lodash', ->
     expect leshdash.assign
     .to.be.instanceof Function
@@ -114,18 +136,18 @@ describe 'leshdash', ->
         assert it is 4
         resolve!
 
-  specify 'depthFirst' , -> new p (resolve,reject) ~> 
-    leshdash.asyncDepthFirst path.join(path.dirname(require.main.filename) + '/../../'), do
-      callback: ->
-        return "GUZICA " + it
+  # specify 'depthFirst' , -> new p (resolve,reject) ~> 
+  #   leshdash.asyncDepthFirst path.join(path.dirname(require.main.filename) + '/../../'), do
+  #     callback: ->
+  #       return "GUZICA " + it
         
-      getChildren: (node) -> new p (resolve,reject) ~>
+  #     getChildren: (node) -> new p (resolve,reject) ~>
         
-        stats = fs.lstatSync node
-        if not stats.isDirectory() then return resolve void
-        else resolve fromPairs map fs.readdirSync(node), -> ret = (path.join node, it); [ it , ret]
+  #       stats = fs.lstatSync node
+  #       if not stats.isDirectory() then return resolve void
+  #       else resolve fromPairs map fs.readdirSync(node), -> ret = (path.join node, it); [ it , ret]
 
-    .then -> resolve()
+  #   .then -> resolve()
         
         
   specify 'randomid', -> new p (resolve,reject) ~>

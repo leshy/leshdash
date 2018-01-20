@@ -1,5 +1,5 @@
 (function(){
-  var p, leshdash, toPromise, mapValues, head, tail, pwait, assign, flattenDeep, defaultsDeep, reduce, dChars, jsonQuery, jsonError, wait, waitCancel, abstractPad, pad, rpad, antipad, push, pop, token, identity, asyncDepthFirst, matchString, cbc, renameKeys, mapObject, randomId, weighted, time, second, minute, hour, pairsTails, pairs, mapFilter, out$ = typeof exports != 'undefined' && exports || this, slice$ = [].slice, toString$ = {}.toString;
+  var p, leshdash, toPromise, mapValues, head, tail, pwait, assign, flattenDeep, defaultsDeep, reduce, dChars, jsonQuery, jsonError, wait, waitCancel, abstractPad, pad, rpad, antipad, push, pop, token, identity, asyncDepthFirst, matchString, cbc, renameKeys, mapObject, randomId, weighted, time, second, minute, hour, pairsTails, pairs, mapFilter, linlin, linexp, out$ = typeof exports != 'undefined' && exports || this, slice$ = [].slice, toString$ = {}.toString;
   p = require('bluebird');
   leshdash = require('./index'), toPromise = leshdash.toPromise, mapValues = leshdash.mapValues, head = leshdash.head, tail = leshdash.tail, pwait = leshdash.pwait, assign = leshdash.assign, flattenDeep = leshdash.flattenDeep, defaultsDeep = leshdash.defaultsDeep, reduce = leshdash.reduce;
   out$.dChars = dChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
@@ -256,6 +256,21 @@
       }
     });
   };
+  out$.linlin = linlin = curry$(function(inMin, inMax, outMin, outMax, val){
+    var range1, range2;
+    if (val < inMin) {
+      return outMin;
+    }
+    if (val > inMax) {
+      return outMax;
+    }
+    range1 = inMax - inMin;
+    range2 = outMax - outMin;
+    return outMin + range2 * (val / range1);
+  });
+  out$.linexp = linexp = curry$(function(inMin, inMax, outMin, outMax, val){
+    return true;
+  });
   function curry$(f, bound){
     var context,
     _curry = function(args) {
