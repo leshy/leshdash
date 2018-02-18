@@ -169,17 +169,25 @@ export mapFilter = (target, cb) ->
       if (newElement = cb(element, target)) != void then [ ...ret, newElement ] else ret
   
 
+# let's copy http://doc.sccode.org/Classes/SimpleNumber.html
 export linlin = (inMin, inMax, outMin, outMax, val) -->
-  
   if val < inMin then return outMin
   if val > inMax then return outMax
     
   range1 = inMax - inMin
   range2 = outMax - outMin
+  
   outMin + (range2 * (val / range1))
 
-export linexp = (inMin, inMax, outMin, outMax, val) -->
-  true
+export linexp = (exp, inMin, inMax, outMin, outMax, val) -->
+  if val < inMin then return outMin
+  if val > inMax then return outMax
+    
+  range1 = inMax - inMin
+  range2 = outMax - outMin
+  
+  outMin + (range2 * ((val / range1) ^ exp) )
+  
 
   
   

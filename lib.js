@@ -268,8 +268,17 @@
     range2 = outMax - outMin;
     return outMin + range2 * (val / range1);
   });
-  out$.linexp = linexp = curry$(function(inMin, inMax, outMin, outMax, val){
-    return true;
+  out$.linexp = linexp = curry$(function(exp, inMin, inMax, outMin, outMax, val){
+    var range1, range2;
+    if (val < inMin) {
+      return outMin;
+    }
+    if (val > inMax) {
+      return outMax;
+    }
+    range1 = inMax - inMin;
+    range2 = outMax - outMin;
+    return outMin + range2 * Math.pow(val / range1, exp);
   });
   function curry$(f, bound){
     var context,
