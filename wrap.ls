@@ -32,6 +32,19 @@ export do
 
   id: (f) -> (...args) -> f.apply @, args
 
+  cooldown: (f, time=1000) ->
+    data = {}
+
+    startCooldown = ->
+      data.cooling = true
+      setTimeout (-> data.cooling = false), time
+      
+    (...args) ->
+      if data.cooling then return false
+      else
+        startCooldown()
+        f.apply @, args    
+
   cancel: (f, data) ->
     cancel = void
     (...args) ->

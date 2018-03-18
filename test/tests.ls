@@ -154,3 +154,23 @@ describe 'leshdash', ->
     assert leshdash.randomId(20).length is 20
     resolve()
 
+
+  specify 'cooldown', -> new p (resolve,reject) ~>
+    cnt = 0
+
+    testf = ->
+      cnt := cnt + 1
+
+    testwrapped = leshdash.w.cooldown(testf, 20)
+
+    assert testwrapped() is 1
+    assert testwrapped() is false
+    assert cnt is 1
+
+    setTimeout (->
+      assert testwrapped() is 2
+      assert cnt is 2
+      resolve()), 40
+    
+
+    

@@ -48,8 +48,8 @@ export pad = (text,length,chr=0) ->
 
 export rpad = (text,length,chr=0) ->
   abstractPad(
-    ((text) -> text + chr),
-    ((text) -> text.length >= length),
+((text) -> text + console.log hr),
+((text) -> text.length >= length),
     text)
 
 export antipad = (text,chr="0") ->
