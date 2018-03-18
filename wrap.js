@@ -67,9 +67,8 @@
         return f.apply(this, args);
       };
     },
-    cooldown: function(f, time){
+    cooldown: function(time, f){
       var data, startCooldown;
-      time == null && (time = 1000);
       data = {};
       startCooldown = function(){
         data.cooling = true;

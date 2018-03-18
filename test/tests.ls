@@ -149,11 +149,9 @@ describe 'leshdash', ->
 
   #   .then -> resolve()
         
-        
   specify 'randomid', -> new p (resolve,reject) ~>
     assert leshdash.randomId(20).length is 20
     resolve()
-
 
   specify 'cooldown', -> new p (resolve,reject) ~>
     cnt = 0
@@ -161,7 +159,7 @@ describe 'leshdash', ->
     testf = ->
       cnt := cnt + 1
 
-    testwrapped = leshdash.w.cooldown(testf, 20)
+    testwrapped = leshdash.w.cooldown 20, testf
 
     assert testwrapped() is 1
     assert testwrapped() is false
@@ -170,7 +168,6 @@ describe 'leshdash', ->
     setTimeout (->
       assert testwrapped() is 2
       assert cnt is 2
-      resolve()), 40
-    
+      resolve()), 40    
 
     

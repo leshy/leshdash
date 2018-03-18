@@ -32,7 +32,7 @@ export do
 
   id: (f) -> (...args) -> f.apply @, args
 
-  cooldown: (f, time=1000) ->
+  cooldown: (time, f) ->
     data = {}
 
     startCooldown = ->
